@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../config/firebase';
+// import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+// import { db } from '../config/firebase';
 
 const EntryForm = ({ category, institute, programType, coapRound }) => {
   const [loading, setLoading] = useState(false);
@@ -19,19 +19,26 @@ const EntryForm = ({ category, institute, programType, coapRound }) => {
     if (score < 0 || score > 1000) return alert("Invalid GATE Score.");
     if (Number(formData.gateRank) <= 0) return alert("Invalid GATE Rank.");
 
+
+    // dev only - to avoid spamming the database while testing
+    // In production, this will be replaced with actual Firebase submission
+    alert("Submission disabled in development mode. Please check the console for the data that would have been submitted.");
+    console.log("Form Data to Submit:", { ...formData, gateScore: score, gateRank: Number(formData.gateRank), timestamp: new Date().toISOString() });
+
     setLoading(true);
-    try {
-      await addDoc(collection(db, 'coap_offers'), {
-        ...formData, gateScore: score, gateRank: Number(formData.gateRank), timestamp: serverTimestamp()
-      });
-      alert('Offer submitted successfully!');
-      setFormData({ ...formData, gateScore: '', gateRank: '', specialization: '' });
-    } catch (error) {
-      console.error("Failed to submit offer:", error);
-      alert("Failed to submit. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    // Uncomment the below code to enable Firebase submission after setting up your Firebase project and config
+    // try {
+    //   await addDoc(collection(db, 'coap_offers'), {
+    //     ...formData, gateScore: score, gateRank: Number(formData.gateRank), timestamp: serverTimestamp()
+    //   });
+    //   alert('Offer submitted successfully!');
+    //   setFormData({ ...formData, gateScore: '', gateRank: '', specialization: '' });
+    // } catch (error) {
+    //   console.error("Failed to submit offer:", error);
+    //   alert("Failed to submit. Please try again.");
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   // Shared input styling for cleaner code
