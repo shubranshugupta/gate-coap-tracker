@@ -1,0 +1,111 @@
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../config/firebase';
+
+const EntryForm = ({ category, institute, programType, coapRound }) => {
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    coapId: '', gateScore: '', gateRank: '', category: category[0],
+    institute: institute[0], programType: programType[0],
+    specialization: '', coapRound: coapRound[0]
+  });
+
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const score = Number(formData.gateScore);
+    if (score < 0 || score > 1000) return alert("Invalid GATE Score.");
+    if (Number(formData.gateRank) <= 0) return alert("Invalid GATE Rank.");
+
+    setLoading(true);
+    try {
+      await addDoc(collection(db, 'coap_offers'), {
+        ...formData, gateScore: score, gateRank: Number(formData.gateRank), timestamp: serverTimestamp()
+      });
+      alert('Offer submitted successfully!');
+      setFormData({ ...formData, gateScore: '', gateRank: '', specialization: '' });
+    } catch (error) {
+      console.error("Failed to submit offer:", error);
+      alert("Failed to submit. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Shared input styling for cleaner code
+  const inputStyles = "w-full p-2 border rounded-md outline-none transition-colors duration-200 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400";
+  const labelStyles = "text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors";
+
+  return (
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors duration-300">
+      <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white transition-colors">Report an Offer</h2>
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <div className="space-y-1">
+          <label htmlFor="coapId" className={labelStyles}>COAP ID</label>
+          <input required id="coapId" type="text" pattern="[a-zA-Z0-9]+" name="coapId" value={formData.coapId} onChange={handleChange} placeholder="e.g. COAP26.." className={inputStyles} />
+        </div>
+
+        <div className="space-y-1">
+          <label htmlFor="gateScore" className={labelStyles}>GATE Score</label>
+          <input required id="gateScore" type="number" name="gateScore" value={formData.gateScore} onChange={handleChange} placeholder="e.g. 740" className={inputStyles} />
+        </div>
+
+        <div className="space-y-1">
+          <label htmlFor="gateRank" className={labelStyles}>GATE Rank</label>
+          <input required id="gateRank" type="number" name="gateRank" value={formData.gateRank} onChange={handleChange} placeholder="e.g. 192" className={inputStyles} />
+        </div>
+
+        <div className="space-y-1">
+          <label htmlFor="category" className={labelStyles}>Category</label>
+          <select id="category" name="category" value={formData.category} onChange={handleChange} className={inputStyles}>
+            {category.filter(cat => cat !== 'All').map(cat => <option key={cat} value={cat}>{cat}</option>)}
+          </select>
+        </div>
+
+        <div className="space-y-1">
+          <label htmlFor="institute" className={labelStyles}>Institute</label>
+          <select id="institute" name="institute" value={formData.institute} onChange={handleChange} className={inputStyles}>
+            {institute.filter(inst => inst !== 'All').map(inst => <option key={inst} value={inst}>{inst}</option>)}
+          </select>
+        </div>
+
+        <div className="space-y-1">
+          <label htmlFor="programType" className={labelStyles}>Program Type</label>
+          <select id="programType" name="programType" value={formData.programType} onChange={handleChange} className={inputStyles}>
+            {programType.map(type => <option key={type} value={type}>{type}</option>)}
+          </select>
+        </div>
+
+        <div className="space-y-1 lg:col-span-2">
+          <label htmlFor="specialization" className={labelStyles}>Specialization</label>
+          <input required id="specialization" type="text" name="specialization" value={formData.specialization} onChange={handleChange} placeholder="e.g. CS, AI, Data Science" className={inputStyles} />
+        </div>
+
+        <div className="space-y-1">
+          <label htmlFor="coapRound" className={labelStyles}>COAP Round</label>
+          <select id="coapRound" name="coapRound" value={formData.coapRound} onChange={handleChange} className={inputStyles}>
+            {coapRound.map(round => <option key={round} value={round}>{round}</option>)}
+          </select>
+        </div>
+
+        <div className="lg:col-span-4 mt-2 flex justify-end">
+          <button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-md transition-colors disabled:opacity-50">
+            {loading ? 'Submitting...' : 'Submit Offer'}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+EntryForm.propTypes = {
+  category: PropTypes.array.isRequired,
+  institute: PropTypes.array.isRequired,
+  programType: PropTypes.array.isRequired,
+  coapRound: PropTypes.array.isRequired,
+};
+
+export default EntryForm;
