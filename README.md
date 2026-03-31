@@ -90,6 +90,34 @@ Contributions, issues, and feature requests are welcome! If you are a fellow dev
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+## 🚀 Feature To-Do List (For the Future)
+
+1. Data Export (CSV/Excel)
+
+   **What:** Add a "Download as CSV" button above the table.
+
+   **Why:** Students love playing with the data themselves. Allowing them to download the filtered list will make your tool highly shareable on Telegram and Reddit.
+2. Analytics & Visualizations
+
+   **What:** Integrate a charting library like Recharts or Chart.js.
+
+   **Why:** Instead of just a table, show a bar chart of the "Lowest GATE Score per IIT" or "Number of Offers per Round." Visual data is much easier to digest.
+3. Pagination or Infinite Scrolling
+
+   **What:** Update the DashboardTable to fetch only the last 20-50 offers, and load more when the user scrolls down or clicks "Next."
+
+   **Why:** Right now, the app fetches all documents at once. When thousands of students submit offers, this will slow down the app and increase your Firebase read costs.
+4. Community Moderation (Flagging)
+
+   **What:** Add a small "Report" flag icon next to each row. If an entry gets flagged 5 times, hide it from the dashboard.
+
+   **Why:** Trolls might submit fake data (e.g., GATE Score 1000 getting rejected). Community moderation keeps the data clean without you having to manually delete entries in the Firebase console.
+5. Spam Prevention & CAPTCHA
+
+   **What:** Integrate Google reCAPTCHA v3 or Cloudflare Turnstile into the EntryForm.
+
+   **Why:** Since the form is completely anonymous and open, it is vulnerable to bots submitting fake offers. A silent CAPTCHA will protect your Firestore database.
+
 ## 📜 License
 
 Distributed under the MIT License. See `LICENSE` for more information.
