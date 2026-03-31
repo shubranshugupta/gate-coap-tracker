@@ -13,10 +13,10 @@ A real-time, community-driven web application designed to help GATE Computer Sci
 
 ## 🛠 Tech Stack
 
-* **Frontend Framework:** React 18 (Bootstrapped with Vite)
+* **Frontend Framework:** React (Bootstrapped with Vite)
 * **Styling:** Tailwind CSS v4
 * **Backend & Database:** Firebase (Cloud Firestore NoSQL)
-* **Hosting:** [Vercel / Netlify / Firebase Hosting] *(Update based on your choice)*
+* **Hosting:** Netlify
 
 ## 🚀 Getting Started
 
@@ -53,6 +53,7 @@ Follow these instructions to get a copy of the project up and running on your lo
     VITE_FIREBASE_STORAGE_BUCKET="your-storage-bucket"
     VITE_FIREBASE_MESSAGING_SENDER_ID="your-messaging-sender-id"
     VITE_FIREBASE_APP_ID="your-app-id"
+    VITE_FIREBASE_MEASUREMENT_ID="your-measurement-id"
     ```
 
 4. **Configure Firebase Database Security Rules**
