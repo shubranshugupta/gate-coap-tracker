@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+// Firebase imports - Uncomment and configure when ready to enable database submission
 // import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 // import { db } from '../config/firebase';
 
@@ -24,9 +25,11 @@ const EntryForm = ({ category, institute, programType, coapRound }) => {
     // In production, this will be replaced with actual Firebase submission
     alert("Submission disabled in development mode. Please check the console for the data that would have been submitted.");
     console.log("Form Data to Submit:", { ...formData, gateScore: score, gateRank: Number(formData.gateRank), timestamp: new Date().toISOString() });
+    setFormData({ ...formData, gateScore: '', gateRank: '', specialization: '' });
+    setLoading(false);
 
-    setLoading(true);
     // Uncomment the below code to enable Firebase submission after setting up your Firebase project and config
+    // setLoading(true);
     // try {
     //   await addDoc(collection(db, 'coap_offers'), {
     //     ...formData, gateScore: score, gateRank: Number(formData.gateRank), timestamp: serverTimestamp()
