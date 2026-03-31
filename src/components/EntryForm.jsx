@@ -6,7 +6,7 @@ import { db } from '../config/firebase';
 const EntryForm = ({ category, institute, programType, coapRound }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    coapId: '', gateScore: '', gateRank: '', category: category[0],
+    gateScore: '', gateRank: '', category: category[0],
     institute: institute[0], programType: programType[0],
     specialization: '', coapRound: coapRound[0]
   });
@@ -42,12 +42,6 @@ const EntryForm = ({ category, institute, programType, coapRound }) => {
     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 transition-colors duration-300">
       <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white transition-colors">Report an Offer</h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        
-        <div className="space-y-1">
-          <label htmlFor="coapId" className={labelStyles}>COAP ID</label>
-          <input required id="coapId" type="text" pattern="[a-zA-Z0-9]+" name="coapId" value={formData.coapId} onChange={handleChange} placeholder="e.g. COAP26.." className={inputStyles} />
-        </div>
-
         <div className="space-y-1">
           <label htmlFor="gateScore" className={labelStyles}>GATE Score</label>
           <input required id="gateScore" type="number" name="gateScore" value={formData.gateScore} onChange={handleChange} placeholder="e.g. 740" className={inputStyles} />
