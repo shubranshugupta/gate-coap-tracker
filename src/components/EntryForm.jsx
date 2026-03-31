@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import toast from 'react-hot-toast';
 
 const EntryForm = ({ category, institute, programType, coapRound }) => {
   const [loading, setLoading] = useState(false);
@@ -16,9 +17,8 @@ const EntryForm = ({ category, institute, programType, coapRound }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const score = Number(formData.gateScore);
-    if (score < 0 || score > 1000) return alert("Invalid GATE Score.");
-    if (Number(formData.gateRank) <= 0) return alert("Invalid GATE Rank.");
-
+    if (score < 0 || score > 1000) return toast.error("Invalid GATE Score");
+    if (Number(formData.gateRank) <= 0) return toast.error("Invalid GATE Rank");
 
     // dev only - to avoid spamming the database while testing
     // In production, this will be replaced with actual Firebase submission
@@ -31,11 +31,11 @@ const EntryForm = ({ category, institute, programType, coapRound }) => {
       await addDoc(collection(db, 'coap_offers'), {
         ...formData, gateScore: score, gateRank: Number(formData.gateRank), timestamp: serverTimestamp()
       });
-      alert('Offer submitted successfully!');
+      toast.success('Offer submitted successfully');
       setFormData({ ...formData, gateScore: '', gateRank: '', specialization: '' });
     } catch (error) {
       console.error("Failed to submit offer:", error);
-      alert("Failed to submit. Please try again.");
+      toast.error("Failed to submit. Please try again.");
     } finally {
       setLoading(false);
     }
