@@ -6,8 +6,8 @@ import { db } from '../config/firebase';
 const EntryForm = ({ category, institute, programType, coapRound }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    gateScore: '', gateRank: '', category: category[0],
-    institute: institute[0], programType: programType[0],
+    gateScore: '', gateRank: '', category: category[1],
+    institute: institute[1], programType: programType[0],
     specialization: '', coapRound: coapRound[0]
   });
 
