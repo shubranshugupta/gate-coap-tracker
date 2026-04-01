@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 // Firebase imports - Uncomment and configure when ready to enable database submission
-// import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-// import { db } from '../config/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../config/firebase';
 import toast from 'react-hot-toast';
 
 const EntryForm = ({ category, institute, programType, coapRound }) => {
@@ -24,25 +24,25 @@ const EntryForm = ({ category, institute, programType, coapRound }) => {
 
 		// dev only - to avoid spamming the database while testing
 		// In production, this will be replaced with actual Firebase submission
-		toast.success("Submission disabled in development mode. Please check the console for the data that would have been submitted.");
-		console.log("Form Data to Submit:", { ...formData, gateScore: score, gateRank: Number(formData.gateRank), timestamp: new Date().toISOString() });
-		setFormData({ ...formData, gateScore: '', gateRank: '', specialization: '' });
-		setLoading(false);
+		// toast.success("Submission disabled in development mode. Please check the console for the data that would have been submitted.");
+		// console.log("Form Data to Submit:", { ...formData, gateScore: score, gateRank: Number(formData.gateRank), timestamp: new Date().toISOString() });
+		// setFormData({ ...formData, gateScore: '', gateRank: '', specialization: '' });
+		// setLoading(false);
 
 		// Uncomment the below code to enable Firebase submission after setting up your Firebase project and config
-		// setLoading(true);
-		// try {
-		//   await addDoc(collection(db, 'coap_offers'), {
-		//     ...formData, gateScore: score, gateRank: Number(formData.gateRank), timestamp: serverTimestamp()
-		//   });
-		//   toast.success('Offer submitted successfully');
-		//   setFormData({ ...formData, gateScore: '', gateRank: '', specialization: '' });
-		// } catch (error) {
-		//   console.error("Failed to submit offer:", error);
-		//   toast.error("Failed to submit. Please try again.");
-		// } finally {
-		//   setLoading(false);
-		// }
+		setLoading(true);
+		try {
+		  await addDoc(collection(db, 'coap_offers'), {
+		    ...formData, gateScore: score, gateRank: Number(formData.gateRank), timestamp: serverTimestamp()
+		  });
+		  toast.success('Offer submitted successfully');
+		  setFormData({ ...formData, gateScore: '', gateRank: '', specialization: '' });
+		} catch (error) {
+		  console.error("Failed to submit offer:", error);
+		  toast.error("Failed to submit. Please try again.");
+		} finally {
+		  setLoading(false);
+		}
 	};
 
 	// Shared input styling for cleaner code
