@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+// Firebase imports - Uncomment and configure when ready to enable database submission
 // import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 // import { db } from '../config/firebase';
 
