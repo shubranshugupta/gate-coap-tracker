@@ -21,6 +21,18 @@ const OfferTracker = () => {
 		}
 	}, [darkMode]);
 
+	useEffect(() => {
+		const mediaquery = window.matchMedia('(prefers-color-scheme: dark)');
+		const handler = (e) => {
+			if (!('theme' in localStorage)) {
+				setDarkMode(e.matches);
+			}
+		};
+
+		mediaquery.addEventListener('change', handler);
+		return () => mediaquery.removeEventListener('change', handler);
+	}, []);
+
 	const CATEGORIES = ['All', 'General', 'EWS', 'OBC-NCL', 'SC', 'ST', 'PwD'];
 	const INSTITUTES = ["All", "IISc Bangalore", "IIT Bombay", "IIT Delhi", "IIT Madras", "IIT Kanpur", "IIT Kharagpur",
 		"IIT Roorkee", "IIT Guwahati", "IIT Hyderabad", "IIT BHU", "IIT ISM Dhanbad", "IIT Indore", "IIT Gandhinagar",
