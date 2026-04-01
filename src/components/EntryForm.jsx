@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 // Firebase imports - Uncomment and configure when ready to enable database submission
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { signInAnonymously } from 'firebase/auth';
+import { db, auth } from '../config/firebase';
 import toast from 'react-hot-toast';
 
 const EntryForm = ({ category, institute, programType, coapRound }) => {
@@ -15,12 +16,13 @@ const EntryForm = ({ category, institute, programType, coapRound }) => {
 
 	const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
+	// Inside your EntryForm component:
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		const score = Number(formData.gateScore);
-		if (score < 0 || score > 1000) return toast.error("Invalid GATE Score");
-		if (Number(formData.gateRank) <= 0) return toast.error("Invalid GATE Rank");
 
+		const score = Number(formData.gateScore);
+		if (score < 0 || score > 1000) return toast.error("Invalid GATE Score.");
+		if (Number(formData.gateRank) <= 0) return toast.error("Invalid GATE Rank.");
 
 		// dev only - to avoid spamming the database while testing
 		// In production, this will be replaced with actual Firebase submission
@@ -32,16 +34,32 @@ const EntryForm = ({ category, institute, programType, coapRound }) => {
 		// Uncomment the below code to enable Firebase submission after setting up your Firebase project and config
 		setLoading(true);
 		try {
-		  await addDoc(collection(db, 'coap_offers'), {
-		    ...formData, gateScore: score, gateRank: Number(formData.gateRank), timestamp: serverTimestamp()
-		  });
-		  toast.success('Offer submitted successfully');
-		  setFormData({ ...formData, gateScore: '', gateRank: '', specialization: '' });
+			// 1. Authenticate anonymously
+			const userCredential = await signInAnonymously(auth);
+			const uid = userCredential.user.uid;
+
+			// 2. Create a compound ID: UID_Institute_Round
+			// e.g., "abc123_IITBombay_Round1"
+			const safeInstitute = formData.institute.replace(/[^a-zA-Z0-9]/g, '');
+			const safeRound = formData.coapRound.replace(/[^a-zA-Z0-9]/g, '');
+			const compoundDocId = `${uid}_${safeInstitute}_${safeRound}`;
+
+			// 3. Use setDoc with the custom ID instead of addDoc
+			await setDoc(doc(db, 'coap_offers', compoundDocId), {
+				...formData,
+				userId: uid, // Required for our new security rules
+				gateScore: score,
+				gateRank: Number(formData.gateRank),
+				timestamp: serverTimestamp()
+			});
+
+			toast.success('Offer submitted successfully!');
+			setFormData({ ...formData, gateScore: '', gateRank: '', specialization: '' });
 		} catch (error) {
-		  console.error("Failed to submit offer:", error);
-		  toast.error("Failed to submit. Please try again.");
+			console.error("Submission error:", error);
+			toast.error("Failed to submit. Please try again.");
 		} finally {
-		  setLoading(false);
+			setLoading(false);
 		}
 	};
 
