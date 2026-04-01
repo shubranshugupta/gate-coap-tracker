@@ -12,19 +12,17 @@ const OfferTracker = () => {
 	});
 
 	useEffect(() => {
-		if (darkMode) {
-			document.documentElement.classList.add('dark');
-			localStorage.setItem('theme', 'dark');
-		} else {
-			document.documentElement.classList.remove('dark');
-			localStorage.setItem('theme', 'light');
-		}
-	}, [darkMode]);
+        if (darkMode) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }, [darkMode]);
 
 	useEffect(() => {
-		const mediaquery = window.matchMedia('(prefers-color-scheme: dark)');
+		const mediaquery = globalThis.window.matchMedia('(prefers-color-scheme: dark)');
 		const handler = (e) => {
-			if (!('theme' in localStorage)) {
+			if (('theme' in localStorage)) {
 				setDarkMode(e.matches);
 			}
 		};
@@ -32,6 +30,12 @@ const OfferTracker = () => {
 		mediaquery.addEventListener('change', handler);
 		return () => mediaquery.removeEventListener('change', handler);
 	}, []);
+
+	const handleThemeToggle = () => {
+        const newTheme = !darkMode;
+        setDarkMode(newTheme);
+        localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    };
 
 	const CATEGORIES = ['All', 'General', 'EWS', 'OBC-NCL', 'SC', 'ST', 'PwD'];
 	const INSTITUTES = ["All", "IISc Bangalore", "IIT Bombay", "IIT Delhi", "IIT Madras", "IIT Kanpur", "IIT Kharagpur",
@@ -49,7 +53,7 @@ const OfferTracker = () => {
 				<header className="relative text-center space-y-2 pt-4">
 					<div className="absolute right-0 top-0 sm:top-4">
 						<button
-							onClick={() => setDarkMode(!darkMode)}
+							onClick={handleThemeToggle}
 							className="p-2 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors focus:outline-none"
 							aria-label="Toggle Dark Mode"
 						>
