@@ -4,9 +4,9 @@ import DashboardTable from './DashboardTable';
 
 const OfferTracker = () => {
 	const [darkMode, setDarkMode] = useState(() => {
-		if (typeof window !== 'undefined') {
+		if (globalThis.window !== undefined) {
 			return localStorage.getItem('theme') === 'dark' ||
-				(!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+				(!('theme' in localStorage) && globalThis.window.matchMedia('(prefers-color-scheme: dark)').matches);
 		}
 		return false;
 	});
