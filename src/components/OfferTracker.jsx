@@ -22,7 +22,7 @@ const OfferTracker = () => {
 	useEffect(() => {
 		const mediaquery = globalThis.window.matchMedia('(prefers-color-scheme: dark)');
 		const handler = (e) => {
-			if (('theme' in localStorage)) {
+			if (!('theme' in localStorage)) {
 				setDarkMode(e.matches);
 			}
 		};
