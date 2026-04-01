@@ -40,8 +40,8 @@ const EntryForm = ({ category, institute, programType, coapRound }) => {
 
 			// 2. Create a compound ID: UID_Institute_Round
 			// e.g., "abc123_IITBombay_Round1"
-			const safeInstitute = formData.institute.replace(/[^a-zA-Z0-9]/g, '');
-			const safeRound = formData.coapRound.replace(/[^a-zA-Z0-9]/g, '');
+			const safeInstitute = formData.institute.replaceAll(/[^a-zA-Z0-9]/g, '');
+			const safeRound = formData.coapRound.replaceAll(/[^a-zA-Z0-9]/g, '');
 			const compoundDocId = `${uid}_${safeInstitute}_${safeRound}`;
 
 			// 3. Use setDoc with the custom ID instead of addDoc

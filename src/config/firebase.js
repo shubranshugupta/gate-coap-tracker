@@ -17,7 +17,7 @@ const app = initializeApp(firebaseConfig);
 // Initialize App Check
 // Note: You must generate a reCAPTCHA v3 site key in the Google Cloud Console
 // and add it to your .env file as VITE_RECAPTCHA_SITE_KEY
-if (typeof window !== 'undefined') {
+if (globalThis.window) {
 	initializeAppCheck(app, {
 		provider: new ReCaptchaV3Provider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),
 		isTokenAutoRefreshEnabled: true
