@@ -107,7 +107,3 @@ Follow these instructions to get a copy of the project up and running on your lo
    **What:** Integrate Google reCAPTCHA v3 or Cloudflare Turnstile into the EntryForm.
 
    **Why:** Since the form is completely anonymous and open, it is vulnerable to bots submitting fake offers. A silent CAPTCHA will protect your Firestore database.
-
-## 📜 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
