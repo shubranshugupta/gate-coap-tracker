@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import EntryForm from './EntryForm';
 import DashboardTable from './DashboardTable';
+import { 
+	CATEGORIES, 
+	INSTITUTES, 
+	PROGRAM_TYPES 
+} from '../utils/constants';
 
 const OfferTracker = () => {
 	const [darkMode, setDarkMode] = useState(() => {
@@ -37,12 +42,7 @@ const OfferTracker = () => {
         localStorage.setItem('theme', newTheme ? 'dark' : 'light');
     };
 
-	const CATEGORIES = ['All', 'General', 'EWS', 'OBC-NCL', 'SC', 'ST', 'PwD'];
-	const INSTITUTES = ["All", "IISc Bangalore", "IIT Bombay", "IIT Delhi", "IIT Madras", "IIT Kanpur", "IIT Kharagpur",
-		"IIT Roorkee", "IIT Guwahati", "IIT Hyderabad", "IIT BHU", "IIT ISM Dhanbad", "IIT Indore", "IIT Gandhinagar",
-		"IIT Ropar", "IIT Patna", "IIT Bhubaneswar", "IIT Mandi", "IIT Jodhpur", "IIT Tirupati", "IIT Palakkad",
-		"IIT Bhilai", "IIT Goa", "IIT Dharwad", "IIT Jammu"];
-	const PROGRAM_TYPES = ['Mtech', 'Mtech(RA/RAP/HVA)', 'MS', 'MS(RA/RAP)'];
+	
 	const ROUNDS = Array.from({ length: 10 }, (_, i) => `Round ${i + 1}`).concat(['Additional Rounds']);
 
 	return (
