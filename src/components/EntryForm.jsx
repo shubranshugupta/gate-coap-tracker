@@ -97,8 +97,14 @@ const EntryForm = ({ category, institute, programType, coapRound }) => {
         </div>
 
         <div className="lg:col-span-4 mt-2 flex justify-end">
-          <button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-md transition-colors disabled:opacity-50">
-            {loading ? 'Submitting...' : 'Submit Offer'}
+          <button type="submit" disabled={loading} className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium rounded-md transition-colors disabled:opacity-50 h-10 w-40 flex items-center justify-center">
+            {loading ? (
+              <img
+                src="/spinner.svg"
+                className="animate-spin h-8 w-8"
+                alt="loading"
+              />
+            ) : 'Submit Offer'}
           </button>
         </div>
       </form>
