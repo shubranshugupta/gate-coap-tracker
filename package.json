@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "npx firebase deploy --only firestore:rules,firestore:indexes",
+    "postbuild": "npx firebase deploy --only firestore:rules,firestore:indexes --token \"$FIREBASE_TOKEN\"",
     "start": "next start",
     "lint": "next lint"
   },
