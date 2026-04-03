@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Background -->
+  <rect width="100" height="100" rx="20" fill="#0f172a"/>
+  
+  <!-- Graph Line -->
+  <polyline 
+    points="20,65 40,50 60,60 80,35"
+    fill="none"
+    stroke="#6366f1"
+    stroke-width="5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Data Points -->
+  <circle cx="20" cy="65" r="4" fill="#6366f1"/>
+  <circle cx="40" cy="50" r="4" fill="#6366f1"/>
+  <circle cx="60" cy="60" r="4" fill="#6366f1"/>
+  <circle cx="80" cy="35" r="4" fill="#6366f1"/>
+
+  <!-- Live Indicator -->
+  <circle cx="78" cy="22" r="6" fill="#22c55e"/>
+</svg>

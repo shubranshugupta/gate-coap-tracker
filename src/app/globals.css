@@ -1,0 +1,372 @@
+@import "tailwindcss";
+
+/* ── Design Tokens — Dark Mode (default) ──────────────── */
+:root {
+  --color-bg-base: #060b16;
+  --color-bg-surface: #0a1020;
+  --color-bg-card: #0d1528;
+  --color-bg-elevated: #111c35;
+  --color-bg-hover: #162040;
+
+  --color-border: #1a2845;
+  --color-border-bright: #243560;
+
+  --color-accent: #22d3ee;
+  --color-accent-dim: #0e7490;
+  --color-accent-muted: rgba(34, 211, 238, 0.1);
+  --color-accent-glow: rgba(34, 211, 238, 0.22);
+
+  --color-violet: #818cf8;
+  --color-violet-muted: rgba(129, 140, 248, 0.1);
+
+  --color-success: #34d399;
+  --color-success-muted: rgba(52, 211, 153, 0.1);
+  --color-warning: #fbbf24;
+  --color-warning-muted: rgba(251, 191, 36, 0.1);
+  --color-danger: #f87171;
+  --color-danger-muted: rgba(248, 113, 113, 0.1);
+
+  --color-text-primary: #dde4f0;
+  --color-text-secondary: #7a8ba6;
+  --color-text-muted: #334466;
+
+  --font-display: var(--font-syne), sans-serif;
+  --font-body: var(--font-dm-sans), sans-serif;
+  --font-mono: var(--font-jb-mono), monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+}
+
+/* ── Light Mode Overrides ─────────────────────────────── */
+.light {
+  --color-bg-base: #f0f5ff;
+  --color-bg-surface: #e6edf8;
+  --color-bg-card: #ffffff;
+  --color-bg-elevated: #f4f7ff;
+  --color-bg-hover: #eaf0ff;
+
+  --color-border: #ccd6ee;
+  --color-border-bright: #b0c0e0;
+
+  --color-accent: #0891b2;
+  --color-accent-dim: #0e7490;
+  --color-accent-muted: rgba(8, 145, 178, 0.08);
+  --color-accent-glow: rgba(8, 145, 178, 0.18);
+
+  --color-violet: #6366f1;
+  --color-violet-muted: rgba(99, 102, 241, 0.08);
+
+  --color-success: #059669;
+  --color-success-muted: rgba(5, 150, 105, 0.08);
+  --color-warning: #d97706;
+  --color-warning-muted: rgba(217, 119, 6, 0.08);
+  --color-danger: #dc2626;
+  --color-danger-muted: rgba(220, 38, 38, 0.08);
+
+  --color-text-primary: #1a2540;
+  --color-text-secondary: #4a5a7a;
+  --color-text-muted: #8a9ab8;
+}
+
+/* ── Base ─────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--color-bg-base);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* ── Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-bright);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-dim);
+}
+
+/* ── Component Classes ────────────────────────────────── */
+.card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.3s ease;
+}
+
+.btn-accent {
+  background: var(--color-accent);
+  color: var(--color-bg-base);
+  font-family: var(--font-display);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition:
+    box-shadow 0.2s ease,
+    opacity 0.15s ease;
+  cursor: pointer;
+}
+.btn-accent:hover:not(:disabled) {
+  box-shadow:
+    0 0 24px var(--color-accent-glow),
+    0 0 8px var(--color-accent-muted);
+  opacity: 0.9;
+}
+.btn-accent:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.btn-ghost:hover {
+  border-color: var(--color-accent-dim);
+  color: var(--color-accent);
+  background: var(--color-accent-muted);
+}
+
+.input-base {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+  width: 100%;
+}
+.input-base::placeholder {
+  color: var(--color-text-muted);
+}
+.input-base:focus {
+  border-color: var(--color-accent-dim);
+  box-shadow: 0 0 0 3px var(--color-accent-muted);
+}
+
+.badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 99px;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.badge-round {
+  background: var(--color-success-muted);
+  color: var(--color-success);
+  border: 1px solid rgba(52, 211, 153, 0.22);
+}
+.badge-category {
+  background: var(--color-violet-muted);
+  color: var(--color-violet);
+  border: 1px solid rgba(129, 140, 248, 0.2);
+}
+.badge-warn {
+  background: var(--color-warning-muted);
+  color: var(--color-warning);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+/* ── Backgrounds ──────────────────────────────────────── */
+.bg-grid {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    var(--color-border) 1px,
+    transparent 0
+  );
+  background-size: 28px 28px;
+}
+
+.glow-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-accent-dim) 25%,
+    var(--color-accent) 50%,
+    var(--color-accent-dim) 75%,
+    transparent 100%
+  );
+  opacity: 0.35;
+}
+
+/* ── Animations ───────────────────────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes pulseGlow {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 5px var(--color-accent);
+  }
+  50% {
+    opacity: 0.5;
+    box-shadow: 0 0 14px var(--color-accent-glow);
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.45s ease forwards;
+}
+.animate-fade-in-down {
+  animation: fadeInDown 0.35s ease forwards;
+}
+
+.animate-delay-100 {
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+.animate-delay-200 {
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+.animate-delay-300 {
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+.animate-delay-400 {
+  animation-delay: 0.4s;
+  opacity: 0;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  flex-shrink: 0;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--color-text-secondary) 0%,
+    var(--color-accent) 45%,
+    var(--color-violet) 55%,
+    var(--color-text-secondary) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ── Stat Card ────────────────────────────────────────── */
+.stat-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  border-radius: 99px 0 0 99px;
+}
+.stat-card:hover {
+  border-color: var(--color-border-bright);
+  transform: translateY(-2px);
+}
+.stat-card-cyan::before {
+  background: var(--color-accent);
+}
+.stat-card-violet::before {
+  background: var(--color-violet);
+}
+.stat-card-green::before {
+  background: var(--color-success);
+}
+.stat-card-amber::before {
+  background: var(--color-warning);
+}
+
+
+/* ── Row Flash (new real-time entry) ─────────────────── */
+@keyframes rowFlash {
+  0%   { background: var(--color-accent-muted); border-left-color: var(--color-accent); }
+  100% { background: transparent; border-left-color: transparent; }
+}
+.row-new {
+  animation: rowFlash 2.5s ease forwards;
+  border-left: 2px solid transparent;
+}
+
+/* ── Skeleton pulse ───────────────────────────────────── */
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.9; }
+}
+.skeleton {
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+  animation: skeletonPulse 1.6s ease-in-out infinite;
+}

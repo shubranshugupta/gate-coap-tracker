@@ -1,0 +1,41 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /coap_offers/{docId} {
+
+      // Anyone can read non-hidden offers
+      allow read: if true;
+
+      // Only authenticated (anonymous) users can create
+      // Doc ID must follow: uid_SafeInstitute_SafeRound
+      allow create: if
+        request.auth != null &&
+        request.auth.uid != null &&
+        // Ensure the userId in the document matches the authenticated user
+        request.resource.data.userId == request.auth.uid &&
+        // Enforce compound doc ID ownership
+        docId.matches(request.auth.uid + '_.*') &&
+        // Validate required fields
+        request.resource.data.keys().hasAll([
+          'gateScore', 'gateRank', 'category', 'institute',
+          'programType', 'specialization', 'coapRound',
+          'userId', 'timestamp', 'flagCount'
+        ]) &&
+        // Validate field types and ranges
+        request.resource.data.gateScore is number &&
+        request.resource.data.gateScore >= 0 &&
+        request.resource.data.gateScore <= 1000 &&
+        request.resource.data.gateRank is number &&
+        request.resource.data.gateRank > 0 &&
+        request.resource.data.flagCount == 0;
+
+      // No client-side updates allowed — flagging goes through Admin SDK API route
+      allow update: if false;
+
+      // No deletes from client
+      allow delete: if false;
+    }
+  }
+}
