@@ -3,11 +3,6 @@
     {
       "collectionGroup": "coap_offers",
       "queryScope": "COLLECTION",
-      "fields": [{ "fieldPath": "timestamp", "order": "DESCENDING" }]
-    },
-    {
-      "collectionGroup": "coap_offers",
-      "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "institute", "order": "ASCENDING" },
         { "fieldPath": "timestamp", "order": "DESCENDING" }
