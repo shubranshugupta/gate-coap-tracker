@@ -260,7 +260,7 @@ export default function EntryForm() {
 
       if (firebaseError.code === "permission-denied") {
         userMessage =
-          "Firestore permission denied — check your security rules.";
+          "Duplicate entry not allowed: Only one offer per institute/program/round.";
       } else if (firebaseError.code === "auth/operation-not-allowed") {
         userMessage = "Anonymous auth is not enabled in Firebase console.";
       } else if (
