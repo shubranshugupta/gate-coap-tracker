@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type { Timestamp } from 'firebase/firestore';
 import { CATEGORIES, INSTITUTES } from '@/utils/constants';
-import { useOffers } from '@/hooks/useOffers';
+import { useOffers, FLAG_THRESHOLD } from '@/hooks/useOffers';
 import ExportMenu from './ExportMenu';
 import FlagButton from './FlagButton';
 import type { Offer } from '@/types';
@@ -455,7 +455,7 @@ export default function DashboardTable() {
           className="text-[10px]"
           style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-muted)' }}
         >
-          Flag incorrect or fake offers. Entries flagged 5 times are hidden automatically.
+          Flag incorrect or fake offers. Entries flagged {FLAG_THRESHOLD} times are hidden automatically.
         </p>
       </div>
 

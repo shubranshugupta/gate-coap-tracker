@@ -222,7 +222,8 @@ export default function EntryForm() {
       /* ── Step 3: Build compound doc ID ── */
       const safeInstitute = formData.institute.replace(/[^a-zA-Z0-9]/g, "");
       const safeRound = formData.coapRound.replace(/[^a-zA-Z0-9]/g, "");
-      const docId = `${uid}_${safeInstitute}_${safeRound}`;
+      const safeProgram = formData.programType.replace(/[^a-zA-Z0-9]/g, "");
+      const docId = `${uid}_${safeInstitute}_${safeProgram}_${safeRound}`;
       console.log("[Submit] Step 3 → Doc ID:", docId);
 
       /* ── Step 4: Write to Firestore ── */

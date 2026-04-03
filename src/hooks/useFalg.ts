@@ -3,7 +3,6 @@
 import { useState, useCallback, useEffect } from "react";
 
 const STORAGE_KEY = "coap_flagged_offers";
-const FLAG_THRESHOLD = 5;
 
 function getFlaggedSet(): Set<string> {
   try {
