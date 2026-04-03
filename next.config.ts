@@ -1,4 +1,3 @@
-import "server-only";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
