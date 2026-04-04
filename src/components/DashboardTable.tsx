@@ -317,51 +317,66 @@ export default function DashboardTable({ onTotalCount }: DashboardTableProps) {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <FilterIcon />
-            <select
-              value={filterInstitute}
-              onChange={(e) => setFilterInstitute(e.target.value)}
-              className={selectCls}
-              style={{ maxWidth: "180px" }}
-              aria-label="Filter by institute"
-            >
-              {INSTITUTES.map((inst) => (
-                <option key={inst} value={inst}>
-                  {inst}
-                </option>
-              ))}
-            </select>
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className={selectCls}
-              aria-label="Filter by category"
-            >
-              {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-            {filtersActive && (
-              <button
-                onClick={clearFilters}
-                className="btn-ghost text-xs px-3 py-2"
+          {/* Right: filters + export */}
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            {/* Filter icon + selects group */}
+            <div className="flex items-center gap-2">
+              <span style={{ color: "var(--color-text-muted)", flexShrink: 0 }}>
+                <FilterIcon />
+              </span>
+
+              <select
+                value={filterInstitute}
+                onChange={(e) => setFilterInstitute(e.target.value)}
+                className={selectCls}
+                style={{ width: "160px" }}
+                aria-label="Filter by institute"
               >
-                Clear
-              </button>
-            )}
+                {INSTITUTES.map((inst) => (
+                  <option key={inst} value={inst}>
+                    {inst}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className={selectCls}
+                style={{ width: "120px" }}
+                aria-label="Filter by category"
+              >
+                {CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Divider */}
             <div
-              className="h-4 w-px mx-1 hidden sm:block"
+              className="h-6 w-px flex-shrink-0"
               style={{ background: "var(--color-border)" }}
             />
-            <ExportMenu
-              offers={offers}
-              filterInstitute={filterInstitute}
-              filterCategory={filterCategory}
-              disabled={loading}
-            />
+
+            {/* Clear + Export group */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {filtersActive && (
+                <button
+                  onClick={clearFilters}
+                  className="btn-ghost text-xs px-3 py-2 flex-shrink-0"
+                >
+                  Clear
+                </button>
+              )}
+              <ExportMenu
+                offers={offers}
+                filterInstitute={filterInstitute}
+                filterCategory={filterCategory}
+                disabled={loading}
+              />
+            </div>
           </div>
         </div>
       </div>
