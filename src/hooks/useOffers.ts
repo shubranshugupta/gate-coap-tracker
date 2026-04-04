@@ -1,7 +1,7 @@
 // src/hooks/useOffers.ts
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   collection,
   query,
@@ -11,6 +11,7 @@ import {
   startAfter,
   getDocs,
   onSnapshot,
+  getCountFromServer,
   type QueryConstraint,
   type QueryDocumentSnapshot,
   type DocumentData,
@@ -19,7 +20,7 @@ import { db } from "@/config/firebase";
 import type { Offer } from "@/types";
 
 const PAGE_SIZE = 20;
-export const FLAG_THRESHOLD = 10; // ← hide offers at or above this count
+const FLAG_THRESHOLD = 5; // ← hide offers at or above this count
 
 export interface UseOffersReturn {
   offers: Offer[];
@@ -28,6 +29,7 @@ export interface UseOffersReturn {
   hasMore: boolean;
   error: string | null;
   totalLoaded: number;
+  totalCount: number; // ← total docs in Firestore (for stats)
   newIds: Set<string>;
   loadMore: () => Promise<void>;
 }
@@ -49,9 +51,22 @@ export function useOffers(
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [newIds, setNewIds] = useState<Set<string>>(new Set());
+  const [totalCount, setTotalCount] = useState(0);
 
   const olderRef = useRef<Offer[]>([]);
   const isFirstLoad = useRef(true);
+
+  // Fetch total count separately (cheap aggregation query)
+  const fetchTotalCount = useCallback(async () => {
+    try {
+      const snap = await getCountFromServer(
+        query(collection(db, "coap_offers")),
+      );
+      setTotalCount(snap.data().count);
+    } catch {
+      // Non-critical — silently fail
+    }
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -99,6 +114,8 @@ export function useOffers(
         setLastVisible(snapshot.docs.at(-1) ?? null);
         setHasMore(snapshot.docs.length === PAGE_SIZE);
         setLoading(false);
+        // Refresh total count on every snapshot update
+        fetchTotalCount();
       },
       (err) => {
         console.error("Firestore onSnapshot error:", err);
@@ -163,6 +180,7 @@ export function useOffers(
     error,
     totalLoaded: offers.length,
     newIds,
+    totalCount,
     loadMore,
   };
 }

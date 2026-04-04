@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from 'react';
-import type { Timestamp } from 'firebase/firestore';
-import { CATEGORIES, INSTITUTES } from '@/utils/constants';
-import { useOffers, FLAG_THRESHOLD } from '@/hooks/useOffers';
-import ExportMenu from './ExportMenu';
-import FlagButton from './FlagButton';
-import type { Offer } from '@/types';
+import { useState, useEffect } from "react";
+import type { Timestamp } from "firebase/firestore";
+import { CATEGORIES, INSTITUTES } from "@/utils/constants";
+import { useOffers } from "@/hooks/useOffers";
+import ExportMenu from "./ExportMenu";
+import FlagButton from "./FlagButton";
+import type { Offer } from "@/types";
 
 /* ── Helpers ────────────────────────────────────────────── */
 function relativeTime(ts: Timestamp | null): string {
@@ -17,11 +17,6 @@ function relativeTime(ts: Timestamp | null): string {
   if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
   return `${Math.floor(s / 86400)}d ago`;
 }
-
-
-
-
-
 
 /* ── Icons ──────────────────────────────────────────────── */
 const FilterIcon = () => (
@@ -147,26 +142,31 @@ interface OfferRowProps {
 
 const OfferRow = ({ offer, isNew }: OfferRowProps) => (
   <tr
-    className={`border-b transition-colors ${isNew ? 'row-new' : ''}`}
-    style={{ borderColor: 'var(--color-border)' }}
-    onMouseEnter={e => {
-      if (!isNew) (e.currentTarget as HTMLElement).style.background = 'var(--color-bg-elevated)';
+    className={`border-b transition-colors ${isNew ? "row-new" : ""}`}
+    style={{ borderColor: "var(--color-border)" }}
+    onMouseEnter={(e) => {
+      if (!isNew)
+        (e.currentTarget as HTMLElement).style.background =
+          "var(--color-bg-elevated)";
     }}
-    onMouseLeave={e => {
-      if (!isNew) (e.currentTarget as HTMLElement).style.background = '';
+    onMouseLeave={(e) => {
+      if (!isNew) (e.currentTarget as HTMLElement).style.background = "";
     }}
   >
     {/* Score / Rank */}
     <td className="p-4">
       <div
         className="text-base font-semibold"
-        style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-accent)' }}
+        style={{ fontFamily: "var(--font-mono)", color: "var(--color-accent)" }}
       >
         {offer.gateScore}
       </div>
       <div
         className="text-xs mt-0.5"
-        style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-muted)' }}
+        style={{
+          fontFamily: "var(--font-mono)",
+          color: "var(--color-text-muted)",
+        }}
       >
         #{offer.gateRank}
       </div>
@@ -181,7 +181,10 @@ const OfferRow = ({ offer, isNew }: OfferRowProps) => (
     <td className="p-4">
       <span
         className="text-sm font-semibold"
-        style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
+        style={{
+          fontFamily: "var(--font-display)",
+          color: "var(--color-text-primary)",
+        }}
       >
         {offer.institute}
       </span>
@@ -189,12 +192,18 @@ const OfferRow = ({ offer, isNew }: OfferRowProps) => (
 
     {/* Program / Specialization */}
     <td className="p-4 hidden md:table-cell">
-      <div className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+      <div
+        className="text-sm font-medium"
+        style={{ color: "var(--color-text-primary)" }}
+      >
         {offer.programType}
       </div>
       <div
         className="text-xs mt-0.5 truncate max-w-[160px]"
-        style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-muted)' }}
+        style={{
+          fontFamily: "var(--font-mono)",
+          color: "var(--color-text-muted)",
+        }}
       >
         {offer.specialization}
       </div>
@@ -209,7 +218,10 @@ const OfferRow = ({ offer, isNew }: OfferRowProps) => (
     <td className="p-4 hidden lg:table-cell">
       <span
         className="text-xs"
-        style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-muted)' }}
+        style={{
+          fontFamily: "var(--font-mono)",
+          color: "var(--color-text-muted)",
+        }}
       >
         {relativeTime(offer.timestamp)}
       </span>
@@ -222,59 +234,84 @@ const OfferRow = ({ offer, isNew }: OfferRowProps) => (
   </tr>
 );
 
+interface DashboardTableProps {
+  onTotalCount?: (count: number) => void;
+}
+
 /* ── Main Component ─────────────────────────────────────── */
-export default function DashboardTable() {
-  const [filterInstitute, setFilterInstitute] = useState('All');
-  const [filterCategory,  setFilterCategory]  = useState('All');
+export default function DashboardTable({ onTotalCount }: DashboardTableProps) {
+  const [filterInstitute, setFilterInstitute] = useState("All");
+  const [filterCategory, setFilterCategory] = useState("All");
 
   const {
-    offers, loading, loadingMore,
-    hasMore, error, totalLoaded, newIds, loadMore,
+    offers,
+    loading,
+    loadingMore,
+    hasMore,
+    error,
+    totalLoaded,
+    newIds,
+    loadMore,
+    totalCount,
   } = useOffers(filterInstitute, filterCategory);
 
-  const filtersActive = filterInstitute !== 'All' || filterCategory !== 'All';
+  useEffect(() => {
+    onTotalCount?.(totalCount);
+  }, [totalCount, onTotalCount]);
+
+  const filtersActive = filterInstitute !== "All" || filterCategory !== "All";
 
   const clearFilters = () => {
-    setFilterInstitute('All');
-    setFilterCategory('All');
+    setFilterInstitute("All");
+    setFilterCategory("All");
   };
 
-  const selectCls = 'input-base px-3 py-2 text-xs cursor-pointer';
+  const selectCls = "input-base px-3 py-2 text-xs cursor-pointer";
 
   const TABLE_COLS = [
-    { label: 'Score / Rank', cls: '' },
-    { label: 'Category',     cls: 'hidden sm:table-cell' },
-    { label: 'Institute',    cls: '' },
-    { label: 'Program',      cls: 'hidden md:table-cell' },
-    { label: 'Round',        cls: 'hidden sm:table-cell' },
-    { label: 'Time',         cls: 'hidden lg:table-cell' },
-    { label: 'Flag',         cls: '' },           // ← new column
+    { label: "Score / Rank", cls: "" },
+    { label: "Category", cls: "hidden sm:table-cell" },
+    { label: "Institute", cls: "" },
+    { label: "Program", cls: "hidden md:table-cell" },
+    { label: "Round", cls: "hidden sm:table-cell" },
+    { label: "Time", cls: "hidden lg:table-cell" },
+    { label: "Flag", cls: "" }, // ← new column
   ];
 
   return (
     <div className="card">
-
       {/* ── Table Header ── */}
-      <div className="p-5 md:p-6 border-b" style={{ borderColor: 'var(--color-border)' }}>
+      <div
+        className="p-5 md:p-6 border-b"
+        style={{ borderColor: "var(--color-border)" }}
+      >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-
           <div className="flex items-center gap-3">
             <div>
               <h2
                 className="text-lg font-bold"
-                style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
+                style={{
+                  fontFamily: "var(--font-display)",
+                  color: "var(--color-text-primary)",
+                }}
               >
                 Recent Offers
               </h2>
               <div className="flex items-center gap-2 mt-0.5">
-                <div className="live-dot" style={{ width: '6px', height: '6px' }} />
+                <div
+                  className="live-dot"
+                  style={{ width: "6px", height: "6px" }}
+                />
                 <span
                   className="text-xs"
-                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-muted)' }}
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    color: "var(--color-text-muted)",
+                  }}
                 >
                   {loading
-                    ? 'connecting…'
-                    : `${totalLoaded.toLocaleString()} offer${totalLoaded !== 1 ? 's' : ''} loaded`}
+                    ? "connecting…"
+                    : `${totalLoaded.toLocaleString()} offer${totalLoaded !== 1 ? "s" : ""} loaded`}
                 </span>
               </div>
             </div>
@@ -284,33 +321,40 @@ export default function DashboardTable() {
             <FilterIcon />
             <select
               value={filterInstitute}
-              onChange={e => setFilterInstitute(e.target.value)}
+              onChange={(e) => setFilterInstitute(e.target.value)}
               className={selectCls}
-              style={{ maxWidth: '180px' }}
+              style={{ maxWidth: "180px" }}
               aria-label="Filter by institute"
             >
-              {INSTITUTES.map(inst => (
-                <option key={inst} value={inst}>{inst}</option>
+              {INSTITUTES.map((inst) => (
+                <option key={inst} value={inst}>
+                  {inst}
+                </option>
               ))}
             </select>
             <select
               value={filterCategory}
-              onChange={e => setFilterCategory(e.target.value)}
+              onChange={(e) => setFilterCategory(e.target.value)}
               className={selectCls}
               aria-label="Filter by category"
             >
-              {CATEGORIES.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
+              {CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
               ))}
             </select>
             {filtersActive && (
-              <button onClick={clearFilters} className="btn-ghost text-xs px-3 py-2">
+              <button
+                onClick={clearFilters}
+                className="btn-ghost text-xs px-3 py-2"
+              >
                 Clear
               </button>
             )}
             <div
               className="h-4 w-px mx-1 hidden sm:block"
-              style={{ background: 'var(--color-border)' }}
+              style={{ background: "var(--color-border)" }}
             />
             <ExportMenu
               offers={offers}
@@ -327,19 +371,27 @@ export default function DashboardTable() {
         <div
           className="mx-6 mt-6 flex items-start gap-3 p-4 rounded-xl"
           style={{
-            background: 'var(--color-danger-muted)',
-            border: '1px solid rgba(248,113,113,0.25)',
+            background: "var(--color-danger-muted)",
+            border: "1px solid rgba(248,113,113,0.25)",
           }}
         >
-          <span style={{ color: 'var(--color-danger)', flexShrink: 0 }}><AlertIcon /></span>
+          <span style={{ color: "var(--color-danger)", flexShrink: 0 }}>
+            <AlertIcon />
+          </span>
           <div>
             <p
               className="text-sm font-semibold"
-              style={{ color: 'var(--color-danger)', fontFamily: 'var(--font-display)' }}
+              style={{
+                color: "var(--color-danger)",
+                fontFamily: "var(--font-display)",
+              }}
             >
               Connection Error
             </p>
-            <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-secondary)' }}>
+            <p
+              className="text-xs mt-0.5"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
               {error}
             </p>
           </div>
@@ -352,13 +404,19 @@ export default function DashboardTable() {
           <thead>
             <tr
               className="border-b"
-              style={{ background: 'var(--color-bg-surface)', borderColor: 'var(--color-border)' }}
+              style={{
+                background: "var(--color-bg-surface)",
+                borderColor: "var(--color-border)",
+              }}
             >
-              {TABLE_COLS.map(col => (
+              {TABLE_COLS.map((col) => (
                 <th
                   key={col.label}
                   className={`p-4 text-[10px] font-semibold tracking-widest uppercase ${col.cls}`}
-                  style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-muted)' }}
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    color: "var(--color-text-muted)",
+                  }}
                 >
                   {col.label}
                 </th>
@@ -374,28 +432,36 @@ export default function DashboardTable() {
                 <td colSpan={7} className="py-16 text-center">
                   <div
                     className="flex flex-col items-center gap-3"
-                    style={{ color: 'var(--color-text-muted)' }}
+                    style={{ color: "var(--color-text-muted)" }}
                   >
                     <EmptyIcon />
                     <div>
                       <p
                         className="text-sm font-semibold"
-                        style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-secondary)' }}
+                        style={{
+                          fontFamily: "var(--font-display)",
+                          color: "var(--color-text-secondary)",
+                        }}
                       >
                         No offers found
                       </p>
                       <p
                         className="text-xs mt-1"
-                        style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-muted)' }}
+                        style={{
+                          fontFamily: "var(--font-mono)",
+                          color: "var(--color-text-muted)",
+                        }}
                       >
-                        {filtersActive ? 'Try adjusting your filters' : 'Be the first to report an offer!'}
+                        {filtersActive
+                          ? "Try adjusting your filters"
+                          : "Be the first to report an offer!"}
                       </p>
                     </div>
                   </div>
                 </td>
               </tr>
             ) : (
-              offers.map(offer => (
+              offers.map((offer) => (
                 <OfferRow
                   key={offer.id}
                   offer={offer}
@@ -411,7 +477,7 @@ export default function DashboardTable() {
       {!loading && !error && hasMore && (
         <div
           className="p-5 flex items-center justify-center border-t"
-          style={{ borderColor: 'var(--color-border)' }}
+          style={{ borderColor: "var(--color-border)" }}
         >
           <button
             onClick={loadMore}
@@ -419,9 +485,12 @@ export default function DashboardTable() {
             className="btn-ghost flex items-center gap-2 px-5 py-2.5 text-sm"
           >
             {loadingMore ? (
-              <><SpinnerIcon /><span>Loading…</span></>
+              <>
+                <SpinnerIcon />
+                <span>Loading…</span>
+              </>
             ) : (
-              'Load More Offers'
+              "Load More Offers"
             )}
           </button>
         </div>
@@ -431,11 +500,14 @@ export default function DashboardTable() {
       {!loading && !error && !hasMore && offers.length > 0 && (
         <div
           className="p-4 text-center border-t"
-          style={{ borderColor: 'var(--color-border)' }}
+          style={{ borderColor: "var(--color-border)" }}
         >
           <span
             className="text-xs"
-            style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-muted)' }}
+            style={{
+              fontFamily: "var(--font-mono)",
+              color: "var(--color-text-muted)",
+            }}
           >
             ── all {totalLoaded} offers loaded ──
           </span>
@@ -445,19 +517,36 @@ export default function DashboardTable() {
       {/* ── Flag legend ── */}
       <div
         className="px-5 py-3 border-t flex items-center gap-2"
-        style={{ borderColor: 'var(--color-border)', background: 'var(--color-bg-surface)' }}
+        style={{
+          borderColor: "var(--color-border)",
+          background: "var(--color-bg-surface)",
+        }}
       >
-        <svg className="w-3 h-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ color: 'var(--color-text-muted)' }}>
-          <path strokeLinecap="round" strokeLinejoin="round"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <svg
+          className="w-3 h-3 flex-shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+          style={{ color: "var(--color-text-muted)" }}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
         <p
           className="text-[10px]"
-          style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-muted)' }}
+          style={{
+            fontFamily: "var(--font-mono)",
+            color: "var(--color-text-muted)",
+          }}
         >
-          Flag incorrect or fake offers. Entries flagged {FLAG_THRESHOLD} times are hidden automatically.
+          Flag incorrect or fake offers. Entries flagged 5 times are hidden
+          automatically.
         </p>
       </div>
-
     </div>
-  );}
+  );
+}

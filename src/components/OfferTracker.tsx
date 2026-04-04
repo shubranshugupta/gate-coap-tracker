@@ -1,10 +1,11 @@
 "use client";
+
+import { useState, useCallback } from "react";
 import Header from "./layout/Header";
 import Footer from "./layout/Footer";
 import EntryForm from "./EntryForm";
 import DashboardTable from "./DashboardTable";
 import AnalyticsPanel from "./analytics/AnalyticsPanel";
-import { useSubmissionCount } from "@/hooks/useSubmissionCount";
 
 const accentMap = {
   cyan: "stat-card-cyan",
@@ -19,44 +20,63 @@ const valueColors = {
   amber: "var(--color-warning)",
 };
 
+type AccentKey = keyof typeof accentMap;
+
 export default function OfferTracker() {
-  const submissionCount = useSubmissionCount();
-  const stats = [
+  const [totalCount, setTotalCount] = useState<number>(0);
+
+  // Stable callback — won't cause DashboardTable to remount
+  const handleTotalCount = useCallback((count: number) => {
+    setTotalCount(count);
+  }, []);
+
+  const stats: {
+    label: string;
+    value: string;
+    sub: string;
+    accent: AccentKey;
+    icon: string;
+  }[] = [
     {
       label: "Total Submissions",
-      value: submissionCount !== null ? submissionCount : "—",
-      sub: "live from Firestore",
-      accent: "cyan" as const,
+      // Show live count once loaded, otherwise show loading indicator
+      value: totalCount > 0 ? totalCount.toLocaleString("en-IN") : "…",
+      sub:
+        totalCount > 0
+          ? "community reported offers"
+          : "fetching from Firestore",
+      accent: "cyan",
       icon: "📊",
     },
     {
       label: "Institutes",
       value: "24",
       sub: "IITs + IISc",
-      accent: "violet" as const,
+      accent: "violet",
       icon: "🏛️",
     },
     {
       label: "Program Types",
       value: "4",
       sub: "Mtech · MS · RA variants",
-      accent: "green" as const,
+      accent: "green",
       icon: "🎯",
     },
     {
       label: "Categories",
       value: "6",
       sub: "General · EWS · OBC · SC · ST · PwD",
-      accent: "amber" as const,
+      accent: "amber",
       icon: "🗂️",
     },
   ];
+
   return (
     <div
       className="min-h-screen"
       style={{ background: "var(--color-bg-base)" }}
     >
-      <Header />
+      <Header totalOffers={totalCount} />
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-10 space-y-8">
         {/* ── Hero ── */}
@@ -68,9 +88,9 @@ export default function OfferTracker() {
             className="absolute inset-0 pointer-events-none"
             style={{
               background: `
-              radial-gradient(ellipse 60% 50% at 10% 50%, var(--color-accent-muted) 0%, transparent 70%),
-              radial-gradient(ellipse 50% 60% at 90% 30%, var(--color-violet-muted) 0%, transparent 70%)
-            `,
+                radial-gradient(ellipse 60% 50% at 10% 50%, var(--color-accent-muted) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 60% at 90% 30%, var(--color-violet-muted) 0%, transparent 70%)
+              `,
             }}
           />
           <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none" />
@@ -78,6 +98,7 @@ export default function OfferTracker() {
             className="absolute inset-0 rounded-2xl pointer-events-none"
             style={{ border: "1px solid var(--color-border-bright)" }}
           />
+
           <div className="relative z-10 max-w-2xl">
             <div className="flex items-center gap-2 mb-4">
               <div className="live-dot" />
@@ -91,6 +112,7 @@ export default function OfferTracker() {
                 Real-Time · Community Driven
               </span>
             </div>
+
             <h1
               className="text-4xl md:text-5xl font-bold leading-tight mb-4"
               style={{
@@ -101,6 +123,7 @@ export default function OfferTracker() {
               Track COAP Offers{" "}
               <span className="shimmer-text">in Real-Time</span>
             </h1>
+
             <p
               className="text-base leading-relaxed mb-6 max-w-lg"
               style={{ color: "var(--color-text-secondary)" }}
@@ -109,6 +132,7 @@ export default function OfferTracker() {
               Help the GATE CSE community see live cut-off trends across all
               COAP rounds.
             </p>
+
             <div className="flex flex-wrap gap-2">
               {[
                 "Anonymous",
@@ -141,7 +165,7 @@ export default function OfferTracker() {
             >
               <div className="text-xl mb-2">{stat.icon}</div>
               <div
-                className="text-2xl font-bold mb-0.5"
+                className="text-2xl font-bold mb-0.5 transition-all duration-500"
                 style={{
                   fontFamily: "var(--font-mono)",
                   color: valueColors[stat.accent],
@@ -176,14 +200,14 @@ export default function OfferTracker() {
           <EntryForm />
         </section>
 
-        {/* ── Analytics Panel ── */}
+        {/* ── Analytics ── */}
         <section className="animate-fade-in-up animate-delay-300">
           <AnalyticsPanel filterInstitute="All" filterCategory="All" />
         </section>
 
         {/* ── Dashboard Table ── */}
         <section className="animate-fade-in-up animate-delay-400">
-          <DashboardTable />
+          <DashboardTable onTotalCount={handleTotalCount} />
         </section>
       </main>
 
