@@ -222,8 +222,7 @@ export default function EntryForm() {
       /* ── Step 3: Build compound doc ID ── */
       const safeInstitute = formData.institute.replace(/[^a-zA-Z0-9]/g, "");
       const safeRound = formData.coapRound.replace(/[^a-zA-Z0-9]/g, "");
-      const safeProgram = formData.programType.replace(/[^a-zA-Z0-9]/g, "");
-      const docId = `${uid}_${safeInstitute}_${safeProgram}_${safeRound}`;
+      const docId = `${uid}_${safeInstitute}_${safeRound}`;
       console.log("[Submit] Step 3 → Doc ID:", docId);
 
       /* ── Step 4: Write to Firestore ── */
@@ -260,7 +259,7 @@ export default function EntryForm() {
 
       if (firebaseError.code === "permission-denied") {
         userMessage =
-          "Duplicate entry not allowed: Only one offer per institute/program/round.";
+          "Firestore permission denied — check your security rules.";
       } else if (firebaseError.code === "auth/operation-not-allowed") {
         userMessage = "Anonymous auth is not enabled in Firebase console.";
       } else if (
@@ -450,9 +449,10 @@ export default function EntryForm() {
         </div>
 
         <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* Turnstile Widget */}
           <div className="flex flex-col items-start gap-1">
             <span
-              className="text-[10px] font-semibold tracking-widest uppercase mb-1"
+              className="text-[10px] font-semibold tracking-widest uppercase"
               style={{
                 fontFamily: "var(--font-mono)",
                 color: "var(--color-text-muted)",
@@ -460,25 +460,52 @@ export default function EntryForm() {
             >
               Security Check
             </span>
-            <div
-              className="rounded-lg overflow-hidden"
-              style={{ border: "1px solid var(--color-border)" }}
-            >
+
+            {/* Show verified badge after success, widget before */}
+            {turnstileToken ? (
+              <div
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs"
+                style={{
+                  background: "var(--color-success-muted)",
+                  border: "1px solid rgba(52,211,153,0.25)",
+                  color: "var(--color-success)",
+                  fontFamily: "var(--font-mono)",
+                }}
+              >
+                <svg
+                  className="w-3.5 h-3.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                Verified
+              </div>
+            ) : (
               <Turnstile
                 ref={turnstileRef}
                 siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
                 options={{
                   theme: resolvedTheme === "dark" ? "dark" : "light",
                   size: "normal",
+                  appearance: "interaction-only",
                 }}
-                onSuccess={(token) => setTurnstileToken(token)}
+                onSuccess={(token) => {
+                  setTurnstileToken(token);
+                }}
                 onExpire={() => setTurnstileToken(null)}
                 onError={() => {
                   setTurnstileToken(null);
                   toast.error("Security check failed. Please refresh.");
                 }}
               />
-            </div>
+            )}
           </div>
 
           <div className="flex flex-col items-end gap-2 w-full sm:w-auto">
