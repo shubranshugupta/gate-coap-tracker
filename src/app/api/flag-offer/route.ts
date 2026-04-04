@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { getAdminDb } from "@/lib/firebaseAdmin";
 
-const FLAG_THRESHOLD = 5;
+const FLAG_THRESHOLD = Number.parseInt(process.env.FLAG_THRESHOLD || "5");
 
 interface FlagRequestBody {
   offerId: string;

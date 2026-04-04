@@ -177,8 +177,8 @@ export default function EntryForm() {
       toast.error("GATE Rank must be a positive whole number.");
       return;
     }
-    if (!formData.specialization.trim()) {
-      toast.error("Specialization cannot be empty.");
+    if (!formData.specialization.trim() || formData.specialization.length > 50) {
+      toast.error("Specialization cannot be empty and must be under 50 characters.");
       return;
     }
     if (!turnstileToken) {

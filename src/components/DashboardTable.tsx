@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type { Timestamp } from 'firebase/firestore';
 import { CATEGORIES, INSTITUTES } from '@/utils/constants';
-import { useOffers, FLAG_THRESHOLD } from '@/hooks/useOffers';
+import { useOffers } from '@/hooks/useOffers';
 import ExportMenu from './ExportMenu';
 import FlagButton from './FlagButton';
 import type { Offer } from '@/types';
@@ -18,9 +18,7 @@ function relativeTime(ts: Timestamp | null): string {
   return `${Math.floor(s / 86400)}d ago`;
 }
 
-
-
-
+const FLAG_THRESHOLD = Number.parseInt(process.env.NEXT_PUBLIC_FLAG_THRESHOLD || "5");
 
 
 /* ── Icons ──────────────────────────────────────────────── */

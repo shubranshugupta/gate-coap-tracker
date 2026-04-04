@@ -19,7 +19,7 @@ import { db } from "@/config/firebase";
 import type { Offer } from "@/types";
 
 const PAGE_SIZE = 20;
-export const FLAG_THRESHOLD = 10; // ← hide offers at or above this count
+const FLAG_THRESHOLD = Number.parseInt(process.env.NEXT_PUBLIC_FLAG_THRESHOLD || "5");
 
 export interface UseOffersReturn {
   offers: Offer[];

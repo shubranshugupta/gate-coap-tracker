@@ -29,7 +29,8 @@ service cloud.firestore {
         request.resource.data.gateScore <= 1000 &&
         request.resource.data.gateRank is number &&
         request.resource.data.gateRank > 0 &&
-        request.resource.data.flagCount == 0;
+        request.resource.data.flagCount == 0 &&
+        request.resource.data.specialization.size() < 50;
 
       // No client-side updates allowed — flagging goes through Admin SDK API route
       allow update: if false;
